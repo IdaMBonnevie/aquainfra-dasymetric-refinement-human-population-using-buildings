@@ -70,15 +70,15 @@ docker run -it --rm -v $OUT_DIR:/out -e R_SCRIPT=keep_only_valid_corineCLCclasse
 
 # Step 9A: Dasymetric Refinement (Weighted, 2021)
 echo "--- Step 9A: Dasymetric Refinement (Weighted, 2021) ---"
-docker run -it --rm -v $OUT_DIR:/out -e R_SCRIPT=dasymetric_refinement.R d2k-toolbox "weighted" "/out/corine2018_valid.rds" "/out/coryear2018.rds" "/out/lau_2021_catchment.rds" "/out/2021.rds" "/out/catchment.gpkg" "/out/weight_table_final.rds" "/out/buildings.rds" "/out/censusgrid_catchment.rds" "/out/best_threshold.rds" "/out/refinement_weighted_2021.rds" "/out/refinement_weighted_2021.tif" "/out/lau_cell_counts_weighted2021.rds" "/out/corine2018_final.rds" "/out/best_threshold.rds"
+docker run -it --rm -v $OUT_DIR:/out -e R_SCRIPT=dasymetric_refinement.R d2k-toolbox "weighted" "/out/corine2018_valid.rds" "/out/coryear2018.rds" "/out/lau_2021_catchment.rds" "/out/2021.rds" "/out/catchment.gpkg" "/out/weight_table_final.rds" "/out/buildings.rds" "5" "/out/refinement_weighted_2021.rds" "/out/refinement_weighted_2021.tif" "/out/lau_cell_counts_weighted2021.rds" "/out/corine2018_final.rds"
 
 # Step 9B: Dasymetric Refinement (Weighted, 2018)
 echo "--- Step 9B: Dasymetric Refinement (Weighted, 2018) ---"
-docker run -it --rm -v $OUT_DIR:/out -e R_SCRIPT=dasymetric_refinement.R d2k-toolbox "weighted" "/out/corine2018_valid.rds" "/out/coryear2018.rds" "/out/lau_2018_catchment.rds" "/out/2018.rds" "/out/catchment.gpkg" "/out/weight_table_final.rds" "/out/buildings.rds" "/out/censusgrid_catchment.rds" "/out/best_threshold.rds" "/out/refinement_weighted_2018.rds" "/out/refinement_weighted_2018.tif" "/out/lau_cell_counts_weighted2018.rds" "/out/corine2018_extra1.rds" "/out/best_threshold_extra1.rds"
+docker run -it --rm -v $OUT_DIR:/out -e R_SCRIPT=dasymetric_refinement.R d2k-toolbox "weighted" "/out/corine2018_valid.rds" "/out/coryear2018.rds" "/out/lau_2018_catchment.rds" "/out/2018.rds" "/out/catchment.gpkg" "/out/weight_table_final.rds" "/out/buildings.rds" "5" "/out/refinement_weighted_2018.rds" "/out/refinement_weighted_2018.tif" "/out/lau_cell_counts_weighted2018.rds" "/out/corine2018_extra1.rds"
 
 # Step 9C: Dasymetric Refinement (Simple, 2021)
 echo "--- Step 9C: Dasymetric Refinement (Simple, 2021) ---"
-docker run -it --rm -v $OUT_DIR:/out -e R_SCRIPT=dasymetric_refinement.R d2k-toolbox "simple" "/out/corine2018_valid.rds" "/out/coryear2018.rds" "/out/lau_2021_catchment.rds" "/out/2021.rds" "/out/catchment.gpkg" "/out/weight_table_final.rds" "/out/buildings.rds" "/out/censusgrid_catchment.rds" "/out/best_threshold.rds" "/out/refinement_simple_2021.rds" "/out/refinement_simple_2021.tif" "/out/lau_cell_counts_simple2021.rds" "/out/corine2018_extra2.rds" "/out/best_threshold_extra2.rds"
+docker run -it --rm -v $OUT_DIR:/out -e R_SCRIPT=dasymetric_refinement.R d2k-toolbox "simple" "/out/corine2018_valid.rds" "/out/coryear2018.rds" "/out/lau_2021_catchment.rds" "/out/2021.rds" "/out/catchment.gpkg" "/out/weight_table_final.rds" "/out/buildings.rds" "5" "/out/refinement_simple_2021.rds" "/out/refinement_simple_2021.tif" "/out/lau_cell_counts_simple2021.rds" "/out/corine2018_extra2.rds"
 
 # Step 9D: Crop and Mask Raster (Valid CORINE CLC x Catchment)
 echo "--- Step 9D: Crop and Mask Raster (Valid CORINE CLC x Catchment) ---"
