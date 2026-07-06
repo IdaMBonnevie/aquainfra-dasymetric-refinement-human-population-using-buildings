@@ -106,14 +106,15 @@
       "maxOccurs": 1,
       "keywords": []
     },
-    "inputFile8_buildingCountThreshold_rds": {
+    "inputFile8_buildingCountThreshold": {
       "title": "Building count threshold",
-      "description": "Path to an .rds file containing a single number: raster cells with a building count exceeding this threshold are treated as populated (in addition to CORINE classes 111/112).",
+      "description": "Single number: raster cells with a building count exceeding this threshold are treated as populated (in addition to CORINE classes 111/112).",
       "schema": {
-        "type": "object",
-        "contentMediaType": "application/x-rds"
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 30
       },
-      "minOccurs": 0,
+      "minOccurs": 1,
       "maxOccurs": 1,
       "keywords": []
     }
@@ -162,7 +163,7 @@
       "inputFile5_catchment_gpkg": "catchment.gpkg",
       "inputFile6_weightTable_rds": "weight_table_final.rds",
       "inputFile7_buildings_rds": "eubucco_buildings.rds",
-      "inputFile8_buildingCountThreshold_rds": "best_threshold_2021.rds"
+      "inputFile8_buildingCountThreshold": "5"
     }
   }
 }
