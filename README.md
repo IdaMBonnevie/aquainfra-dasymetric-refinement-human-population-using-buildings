@@ -22,7 +22,7 @@ Replace `<your-username>` with your GitHub username after pushing this repositor
 |----------|--------------|-----|
 | **LAU Data** | Local Administrative Units population data (Germany) | It is called directly from the Eurostat and GiscoR libraries |
 | **Census Grid** | Census grid polygons | https://gisco-services.ec.europa.eu/grid/grid_1km.parquet |
-| **EUBUCCO buildings** | Harmonised European building dataset | https://eubucco.com/files/v0.2 |
+| **EUBUCCO buildings** | Harmonised European building dataset (only residential buildings are used) | https://eubucco.com/files/v0.2 |
 | **CORINE Raster** | CORINE Land Cover raster  2018/2006/2000| https://aquainfra-syke.a3s.fi/europe_clc_cog_raster/CLC2018ACC_V2018_20_cog.tif or https://aquainfra-syke.a3s.fi/europe_clc_cog_raster/CLC2006ACC_V2018_20_cog.tif or https://aquainfra-syke.a3s.fi/europe_clc_cog_raster/CLC2000ACC_V2018_20_cog.tif |
 | **Subbasins** | ECRINS subbasin geometries for Elbe | https://water.discomap.eea.europa.eu/arcgis/rest/services/Ecrins/ECRINS_FunctionalElementaryCatchments/MapServer/0/query |
 
@@ -73,7 +73,7 @@ docker run -it --rm -v ./out:/out -e R_SCRIPT=get_census_grid.R d2k-toolbox "/ou
 
 ---
 
-### Step 2D: Get EUBUCCO buildings
+### Step 2D: Get EUBUCCO residential buildings
 
 ```bash
 docker run -it --rm -v ./out:/out -e R_SCRIPT=get_eubucco_buildings.R d2k-toolbox "/out/catchment.gpkg" "/out/countries.rds" "/out/buildings.rds"
