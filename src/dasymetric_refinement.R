@@ -49,40 +49,52 @@ dasymetric_refinement_raster <- function(cor_rast_geom,
   # Mask LAU to valid corine classes
   lau_raster <- terra::mask(lau_raster, cor_rast_geom)
   
-  # Filter buildings to only those constructed in or before pop_year and buildings without construction year
-  buildings_vect_filtered <- buildings_vect[
-    is.na(buildings_vect$construction_year) |
-      buildings_vect$construction_year <= pop_year,
-  ]
+  if (refinement_type == "simple") {
+    
+    # Simple refinement is a binary distribution restricted to CLC 111/112 —
+    # buildings are never incorporated here, regardless of the supplied
+    # threshold, so no building processing is done at all in this branch.
+    cor_artificial_plus_buildings <- cor_rast_geom
+    cor_artificial_plus_buildings[!cor_artificial_plus_buildings %in% c(111, 112)] <- NA
+    
+  } else {
   
-  buildings_spatvect <- terra::vect(buildings_vect_filtered)
-  buildings_centroids  <- terra::centroids(buildings_spatvect)
+    # Filter buildings to only those constructed in or before pop_year and buildings without construction year
+    buildings_vect_filtered <- buildings_vect[
+      is.na(buildings_vect$construction_year) |
+        buildings_vect$construction_year <= pop_year,
+    ]
+    
+    buildings_spatvect <- terra::vect(buildings_vect_filtered)
+    buildings_centroids  <- terra::centroids(buildings_spatvect)
+    
+    # Count number of buildings per cell
+    building_count <- terra::rasterize(
+      buildings_centroids,
+      cor_rast_geom,
+      field = 1,
+      fun = "length"     # counts how many points fall in each cell
+    )
+    
+    # Treat "no buildings" (NA from rasterize) as a true 0, not a missing value —
+    # otherwise NA > bt stays NA all the way through and these cells silently
+    # drop out of the error checks below instead of counting as "fails threshold"
+    building_count <- terra::ifel(is.na(building_count), 0, building_count)
   
-  # Count number of buildings per cell
-  building_count <- terra::rasterize(
-    buildings_centroids,
-    cor_rast_geom,
-    field = 1,
-    fun = "length"     # counts how many points fall in each cell
-  )
+    # Keep only cells with MORE than building_count_threshold buildings
+    building_mask <- building_count > building_count_threshold
+    
+    # Keep only very urban CLC
+    cor_urban_only <- cor_rast_geom
+    cor_urban_only[!cor_urban_only %in% c(111, 112)] <- NA
   
-  # Treat "no buildings" (NA from rasterize) as a true 0, not a missing value —
-  # otherwise NA > bt stays NA all the way through and these cells silently
-  # drop out of the error checks below instead of counting as "fails threshold"
-  building_count <- terra::ifel(is.na(building_count), 0, building_count)
-
-  # Keep only cells with MORE than building_count_threshold buildings
-  building_mask <- building_count > building_count_threshold
-  
-  # Keep only very urban CLC
-  cor_urban_only <- cor_rast_geom
-  cor_urban_only[!cor_urban_only %in% c(111, 112)] <- NA
-
-  # Convert the boolean mask into actual CLC values where buildings overlap
-  building_values <- terra::mask(cor_rast_geom, building_mask, maskvalues = c(NA, FALSE))
-  
-  # Combine the two rasters
-  cor_artificial_plus_buildings <- terra::cover(cor_urban_only, building_values)
+    # Convert the boolean mask into actual CLC values where buildings overlap
+    building_values <- terra::mask(cor_rast_geom, building_mask, maskvalues = c(NA, FALSE))
+    
+    # Combine the two rasters
+    cor_artificial_plus_buildings <- terra::cover(cor_urban_only, building_values)
+    
+    }
   
   # join lau with normalised weights (independent of building_mask, computed once)
   lau_with_pop <- terra::as.data.frame(lau_vect)[, c("LAU_ID_num", source_value_col)]
