@@ -55,13 +55,7 @@ class DasymetricRefinementProcessor(BaseProcessor):
         in_inputFile5_catchment_gpkg = data.get('inputFile5_catchment_gpkg')
         in_inputFile6_weightTable_rds = data.get('inputFile6_weightTable_rds')
         in_inputFile7_buildings_rds = data.get('inputFile7_buildings_rds')
-        in_inputFile8_censusGrid_rds = data.get('inputFile8_censusGrid_rds')
-
-        # Optional: path to a threshold found by an earlier run (e.g. the 2021 run)
-        # to reuse instead of re-running the search. The R script creates this file
-        # (containing NA) if it doesn't already exist, so it's safe to point this at
-        # a fresh path when there's no previous run to reuse.
-        in_inputFile9_bestThresholdIfExisting_rds = data.get('inputFile9_bestThresholdIfExisting_rds')
+        in_inputFile8_buildingCountThreshold = data.get('inputFile8_buildingCountThreshold')
 
         # Check user inputs
         if in_refinement_type is None:
@@ -85,14 +79,8 @@ class DasymetricRefinementProcessor(BaseProcessor):
             raise ProcessorExecuteError('Missing parameter "inputFile6_weightTable_rds". Please provide a inputFile6_weightTable_rds.')
         if in_inputFile7_buildings_rds is None:
             raise ProcessorExecuteError('Missing parameter "inputFile7_buildings_rds". Please provide a inputFile7_buildings_rds.')
-        if in_inputFile8_censusGrid_rds is None:
-            raise ProcessorExecuteError('Missing parameter "inputFile8_censusGrid_rds". Please provide a inputFile8_censusGrid_rds.')
-        # If no existing-threshold file was supplied, point at a fresh path in this
-        # job's output dir — the R script will initialize it (as NA) since it doesn't
-        # exist yet, which correctly triggers the internal search for pop_focus_year "2021".
-        if in_inputFile9_bestThresholdIfExisting_rds is None:
-            best_threshold_seed_filename = 'best_threshold_seed-%s.rds' % self.my_job_id
-            in_inputFile9_bestThresholdIfExisting_rds = f'{output_dir}/{best_threshold_seed_filename}'
+        if in_inputFile8_buildingCountThreshold is None:
+            raise ProcessorExecuteError('Missing parameter "inputFile8_buildingCountThreshold". Please provide a inputFile8_buildingCountThreshold.')
 
         # Where to store output data
         refinement_rds_filename = 'refinement-%s.rds' % self.my_job_id
@@ -110,17 +98,13 @@ class DasymetricRefinementProcessor(BaseProcessor):
         corine_final_filename = 'corine_final-%s.rds' % self.my_job_id
         corine_final_filepath = f'{output_dir}/{corine_final_filename}'
         corine_final_link = f'{output_url}/{corine_final_filename}'
- 
-        best_threshold_filename = 'best_threshold-%s.rds' % self.my_job_id
-        best_threshold_filepath = f'{output_dir}/{best_threshold_filename}'
-        best_threshold_link = f'{output_url}/{best_threshold_filename}'
-
+        
         # Assemble args for script (order must match the R script's commandArgs):
         # <refinement_type> <corineCLC_rds_path> <corine_year_rds_path> <lau_in_catchment_rds_path>
         # <pop_focus_year_rds_path> <catchment_gpkg_path> <weight_table_rds_path>
-        # <buildings_rds_path> <census_grid_rds_path> <best_threshold_if_existing_rds_path>
+        # <buildings_rds_path> <buildingCountThreshold>
         # <output_refinement_rds_path> <output_refinement_tif_path> <output_cell_statistics_rds_path>
-        # <output_corine_final_rds_path> <output_best_threshold_rds_path>
+        # <output_corine_final_rds_path>
         script_args = [
             in_refinement_type,
             in_inputFile1_corineCLC_rds,
@@ -130,13 +114,11 @@ class DasymetricRefinementProcessor(BaseProcessor):
             in_inputFile5_catchment_gpkg,
             in_inputFile6_weightTable_rds,
             in_inputFile7_buildings_rds,
-            in_inputFile8_censusGrid_rds,
-            in_inputFile9_bestThresholdIfExisting_rds,
+            in_inputFile8_buildingCountThreshold,
             refinement_rds_filepath,
             refinement_tif_filepath,
             cell_statistics_filepath,
-            corine_final_filepath,
-            best_threshold_filepath
+            corine_final_filepath
         ]
 
         # Run docker container:
@@ -174,11 +156,6 @@ class DasymetricRefinementProcessor(BaseProcessor):
                         "title": self.metadata['outputs']['corine_final']['title'],
                         "description": self.metadata['outputs']['corine_final']['description'],
                         "href": f'{corine_final_link}'
-                    },
-                    "best_threshold": {
-                        "title": self.metadata['outputs']['best_threshold']['title'],
-                        "description": self.metadata['outputs']['best_threshold']['description'],
-                        "href": f'{best_threshold_link}'
                     }
                 }
             }
