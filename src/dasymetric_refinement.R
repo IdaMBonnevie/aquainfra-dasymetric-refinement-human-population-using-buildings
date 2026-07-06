@@ -180,7 +180,7 @@ dasymetric_refinement_raster <- function(cor_rast_geom,
 args <- commandArgs(trailingOnly = TRUE)
 
 if (length(args) != 13) {
-  stop("Usage: Rscript src/dasymetric_refinement.R <refinement_type> <corineCLC_rds_path> <corine_year_rds_path> <lau_in_catchment_rds_path> <pop_focus_year_rds_path> <catchment_gpkg_path> <weight_table_rds_path> <buildings_rds_path> <building_count_threshold_rds_path> <output_refinement_rds_path> <output_refinement_tif_path> <output_cell_statistics_rds_path> <output_corine_final_rds_path>", call. = FALSE)
+  stop("Usage: Rscript src/dasymetric_refinement.R <refinement_type> <corineCLC_rds_path> <corine_year_rds_path> <lau_in_catchment_rds_path> <pop_focus_year_rds_path> <catchment_gpkg_path> <weight_table_rds_path> <buildings_rds_path> <building_count_threshold> <output_refinement_rds_path> <output_refinement_tif_path> <output_cell_statistics_rds_path> <output_corine_final_rds_path>", call. = FALSE)
 }
 
 refinement_type <- args[1]
@@ -218,9 +218,7 @@ pop_focus_year <- as.character(pop_focus_year)
 catchment_gpkg_path <- args[6]
 weight_table_rds_path <- args[7]
 buildings_rds_path <- args[8]
-building_count_threshold_rds_path <- args[9]
-building_count_threshold <- as.numeric(readRDS(building_count_threshold_rds_path))
-
+building_count_threshold <- as.numeric(args[9])
 output_refinement_rds_path <- args[10]
 output_refinement_tif_path <- args[11]
 output_cell_statistics_rds_path <- args[12]
