@@ -1005,25 +1005,25 @@ save_map_pop_BinaryPercErrors_at_censusgrid <- function(
   
   special_sf$special_class[
     special_sf$dif_perc1 == 999
-  ] <- "No observed population"
-  
+  ] <- "False positives"
+
   special_sf$special_class[
     special_sf$dif_perc1 == 100 &
       special_sf[[census_grid_value_col]] > thresholdvalfortruth
   ] <- paste0(
-    "Observed population > ",
+    "False negatives (obs pop > ",
     thresholdvalfortruth,
-    " not estimated"
+    ")"
   )
-  
+
   # remove any leftovers
   special_sf <- special_sf[!is.na(special_sf$special_class), ]
-  
+
   pal_special <- leaflet::colorFactor(
     palette = c("red", "#F7E3B1"),
     levels = c(
-      "No observed population",
-      paste0("Observed population > ", thresholdvalfortruth, " not estimated")
+      "False positives",
+      paste0("False negatives (obs pop > ", thresholdvalfortruth, ")")
     )
   )
   
@@ -1104,8 +1104,8 @@ save_map_pop_BinaryPercErrors_at_censusgrid <- function(
         normal_palette
       ),
       labels = c(
-        "No observed population",
-        paste0("Observed population > ", thresholdvalfortruth, " not estimated"),
+        "False positives",
+        paste0("False negatives (obs pop > ", thresholdvalfortruth, ")"),
         labels
       ),
       title = paste0("Percentage errors (", pop_reference_year, ")"),
@@ -1244,6 +1244,13 @@ save_histogram_metrics_one_file <- function(metrics_weighted,
   # Combined metrics
   metrics_combined <- rbind(metrics_long, metrics_long_simple)
 
+  # A few metric names are cell-classification counts rather than error
+  # statistics, so they get a clarifying suffix in their displayed title
+  metric_display_suffix <- c(
+    number_of_wrong_cells_included = " (false positives)",
+    number_of_correct_cells_excluded = " (false negatives)"
+  )
+
   # Build master HTML page with each widget inlined (no iframes, no external files)
   html <- c(
     "<html>",
@@ -1263,7 +1270,16 @@ save_histogram_metrics_one_file <- function(metrics_weighted,
     plot_data <- metrics_combined[
       metrics_combined$metric == metric_name,
     ]
-    
+
+    metric_display_name <- paste0(
+      metric_name,
+      ifelse(
+        metric_name %in% names(metric_display_suffix),
+        metric_display_suffix[metric_name],
+        ""
+      )
+    )
+
     p <- ggplot2::ggplot(
       plot_data,
       ggplot2::aes(
@@ -1271,7 +1287,7 @@ save_histogram_metrics_one_file <- function(metrics_weighted,
         y = value,
         fill = group,
         text = paste0(
-          "Metric: ", metric_name, "<br>",
+          "Metric: ", metric_display_name, "<br>",
           "Group: ", group, "<br>",
           "Value: ", round(value, 3)
         )
@@ -1283,7 +1299,7 @@ save_histogram_metrics_one_file <- function(metrics_weighted,
         vjust = -0.5
       ) +
       ggplot2::labs(
-        title = paste0("Metric: ", metric_name),
+        title = paste0("Metric: ", metric_display_name),
         x = NULL,
         y = "Metric value",
         fill = "Distribution"
