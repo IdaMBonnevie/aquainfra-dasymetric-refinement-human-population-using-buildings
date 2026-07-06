@@ -168,7 +168,7 @@ dasymetric_refinement_raster <- function(cor_rast_geom,
   refinement_cropped_1dec <- terra::round(refinement_cropped, digits = 1)
   refinement_cropped_1dec[refinement_cropped_1dec == 0] <- NA
     
-  list(refinement = refinement_cropped_1dec,
+  list(refinement_cropped_1dec = refinement_cropped_1dec,
        cor_artificial_plus_buildings = cor_artificial_plus_buildings,
        lau_cell_counts = lau_cell_counts)
 }
