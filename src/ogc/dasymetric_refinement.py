@@ -77,6 +77,9 @@ class DasymetricRefinementProcessor(BaseProcessor):
             raise ProcessorExecuteError('Missing parameter "inputFile5_catchment_gpkg". Please provide a inputFile5_catchment_gpkg.')
         if in_inputFile6_weightTable_rds is None:
             raise ProcessorExecuteError('Missing parameter "inputFile6_weightTable_rds". Please provide a inputFile6_weightTable_rds.')
+        # Required by the R script's CLI contract for both refinement types, but the R
+        # function only reads/uses these when refinement_type is "weighted" — the
+        # "simple" branch never touches buildings or the threshold at all.
         if in_inputFile7_buildings_rds is None:
             raise ProcessorExecuteError('Missing parameter "inputFile7_buildings_rds". Please provide a inputFile7_buildings_rds.')
         if in_inputFile8_buildingCountThreshold is None:
